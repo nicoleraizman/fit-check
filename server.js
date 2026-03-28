@@ -22,53 +22,30 @@ function buildPrompt(profile) {
   const { heightCm, bodyType, skinToneIndex, ageRange } = profile
   const skinLabel = SKIN_TONE_LABELS[skinToneIndex] ?? 'medium'
 
-  // Describe HOW THE COAT BEHAVES on this height — not the person's height
-  let coatBehavior
+  let hemLine
   if (heightCm < 160) {
-    coatBehavior =
-      `The woman is very short (${heightCm}cm). The midi coat reaches all the way to her mid-calf, ` +
-      `almost ankle length on her short frame. Her legs look short beneath the hem. ` +
-      `The coat overwhelms her small frame — the shoulders are wide on her, the sleeves are long.`
+    hemLine = `On her ${heightCm}cm frame the coat hem falls near her mid-calf, showing very little leg.`
   } else if (heightCm <= 170) {
-    coatBehavior =
-      `The woman is average height (${heightCm}cm). The midi coat falls at a classic midi length, ` +
-      `sitting just below the knee. A moderate amount of leg is visible below the hem.`
+    hemLine = `On her ${heightCm}cm frame the coat hem sits just below the knee, showing a moderate amount of leg.`
   } else if (heightCm <= 180) {
-    coatBehavior =
-      `The woman is tall (${heightCm}cm) with long legs. The same midi coat only reaches her knee on her tall frame. ` +
-      `Significant leg is visible below the hem. The coat looks shorter than it is because of her height.`
+    hemLine = `On her ${heightCm}cm frame the coat hem reaches the knee, showing a generous length of leg below.`
   } else {
-    coatBehavior =
-      `The woman is very tall (${heightCm}cm) with exceptionally long legs. The same midi coat sits well above her knee, ` +
-      `almost like a mini coat on her frame. A lot of leg is visible. ` +
-      `The coat looks dramatically short compared to how it would look on a shorter person.`
+    hemLine = `On her ${heightCm}cm frame the coat hem sits at the knee, leaving most of her long legs visible.`
   }
 
-  // Describe HOW THE COAT BEHAVES on this body shape
-  const bodyBehavior = {
-    petite:
-      `The coat drapes loosely — petite frame with narrow shoulders and a slim silhouette. ` +
-      `The fabric hangs straight with minimal shaping.`,
-    regular:
-      `The coat fits cleanly with proportionate drape across the shoulders and hips. ` +
-      `The silhouette is balanced and the coat falls smoothly.`,
-    curvy:
-      `The woman has an hourglass figure with noticeably wide hips, full bust, and a clearly defined narrow waist. ` +
-      `The coat fabric pulls and drapes around the hips. ` +
-      `The belt cinches at a small waist between a full bust above and wide hips below. ` +
-      `The coat flares outward over the hips.`,
-    tall:
-      `The coat fits well through the shoulders and torso on her lean frame. ` +
-      `The silhouette is long and streamlined, with the hem sitting high due to her height.`,
+  const bodyShape = {
+    petite:  'slim, narrow-shouldered frame',
+    regular: 'balanced, proportionate figure',
+    curvy:   'hourglass figure — full bust, narrow waist, and wide hips',
+    tall:    'lean, long-limbed figure',
   }
-  const bodyDesc = bodyBehavior[bodyType] ?? bodyBehavior.regular
+  const shape = bodyShape[bodyType] ?? bodyShape.regular
 
   return (
-    `A full-body professional fashion photograph of a ${ageRange} woman with ${skinLabel} skin tone ` +
-    `wearing the exact coat from the reference image — same color, fabric, style, and every detail preserved.\n\n` +
-    `HOW THE COAT FITS HER HEIGHT:\n${coatBehavior}\n\n` +
-    `HOW THE COAT FITS HER BODY SHAPE:\n${bodyDesc}\n\n` +
-    `Show the full body from head to toe. White studio background. Fictional person, not a real individual.`
+    `A full-body fashion photograph of a ${ageRange} woman with ${skinLabel} skin tone and a ${shape}. ` +
+    `She is wearing the exact coat shown in the reference image — preserve its color, cut, and all details. ` +
+    `${hemLine} ` +
+    `White studio background, full figure visible head to toe. Fictional person.`
   )
 }
 
@@ -103,19 +80,32 @@ app.post('/api/generate', async (req, res) => {
       contents,
       config: {
         responseModalities: ['TEXT', 'IMAGE'],
-        systemInstruction: 'You are a fashion visualization tool. Your only job is to show exactly how clothing fits on different body types. You must accurately represent the body type and height provided, especially how garment length changes relative to leg length.',
       },
     })
 
-    const responseParts = response.candidates[0].content.parts
-    const imagePart = responseParts.find(p => p.inlineData)
+    console.log('[server] Full Gemini response:', JSON.stringify(response))
 
-    if (!imagePart) {
-      const text = responseParts.filter(p => p.text).map(p => p.text).join('\n')
-      console.warn('[server] No image part. Text:', text)
-      console.warn('[server] Finish reason:', response.candidates[0].finishReason)
+    const candidates = response.candidates
+    if (!candidates || candidates.length === 0) {
+      console.log('[server] Gemini refusal - full response:', JSON.stringify(response))
       return res.status(500).json({
-        error: `No image returned. Finish reason: ${response.candidates[0].finishReason ?? 'unknown'}${text ? ` — "${text}"` : ''}`,
+        error: 'Gemini refused to generate. Reason: ' + (response.promptFeedback?.blockReason || 'unknown'),
+      })
+    }
+
+    const parts = candidates[0]?.content?.parts
+    if (!parts) {
+      console.log('[server] No parts in response:', JSON.stringify(candidates[0]))
+      return res.status(500).json({ error: 'No image returned from Gemini' })
+    }
+
+    const imagePart = parts.find(p => p.inlineData)
+    if (!imagePart) {
+      const text = parts.filter(p => p.text).map(p => p.text).join('\n')
+      console.warn('[server] No image in parts. Text:', text)
+      console.warn('[server] Finish reason:', candidates[0].finishReason)
+      return res.status(500).json({
+        error: `No image in response parts. Finish reason: ${candidates[0].finishReason ?? 'unknown'}${text ? ` — "${text}"` : ''}`,
       })
     }
 
