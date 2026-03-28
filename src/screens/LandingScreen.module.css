@@ -90,6 +90,12 @@
   line-height: 1.5;
 }
 
+.inputHintWarning {
+  font-size: 11px;
+  color: #b07040;
+  line-height: 1.5;
+}
+
 .errorMsg {
   font-size: 12px;
   color: #c0392b;

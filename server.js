@@ -22,30 +22,36 @@ function buildPrompt(profile) {
   const { heightCm, bodyType, skinToneIndex, ageRange } = profile
   const skinLabel = SKIN_TONE_LABELS[skinToneIndex] ?? 'medium'
 
-  let hemLine
-  if (heightCm < 160) {
-    hemLine = `On her ${heightCm}cm frame the coat hem falls near her mid-calf, showing very little leg.`
-  } else if (heightCm <= 170) {
-    hemLine = `On her ${heightCm}cm frame the coat hem sits just below the knee, showing a moderate amount of leg.`
-  } else if (heightCm <= 180) {
-    hemLine = `On her ${heightCm}cm frame the coat hem reaches the knee, showing a generous length of leg below.`
-  } else {
-    hemLine = `On her ${heightCm}cm frame the coat hem sits at the knee, leaving most of her long legs visible.`
+  const heightDescriptors = {
+    short:   `very short (${heightCm}cm) with short legs and a compact frame`,
+    average: `average height (${heightCm}cm) with balanced proportions`,
+    tall:    `tall (${heightCm}cm) with long legs`,
+    verytall: `very tall (${heightCm}cm) with exceptionally long legs`,
   }
+  const heightKey = heightCm < 160 ? 'short' : heightCm <= 170 ? 'average' : heightCm <= 180 ? 'tall' : 'verytall'
+  const heightDesc = heightDescriptors[heightKey]
 
-  const bodyShape = {
-    petite:  'slim, narrow-shouldered frame',
-    regular: 'balanced, proportionate figure',
-    curvy:   'hourglass figure — full bust, narrow waist, and wide hips',
-    tall:    'lean, long-limbed figure',
+  const bodyDescriptors = {
+    petite:  'slim, narrow-shouldered',
+    regular: 'proportionate, medium-build',
+    curvy:   'hourglass — full bust, narrow waist, wide hips',
+    tall:    'lean, long-limbed',
   }
-  const shape = bodyShape[bodyType] ?? bodyShape.regular
+  const bodyDesc = bodyDescriptors[bodyType] ?? bodyDescriptors.regular
+
+  const hemConsequences = {
+    short:    `Because she is short, the coat's hem falls near her mid-calf — it reads as a maxi length on her, with very little leg visible below.`,
+    average:  `The coat hem falls just below the knee — a classic midi length with a moderate amount of leg visible.`,
+    tall:     `Because she is tall, the coat's hem only reaches her knee — more leg is visible than intended by the design.`,
+    verytall: `Because she is very tall, the coat's hem sits above the knee — it reads as a short coat on her, with most of her long legs on show.`,
+  }
+  const hemNote = hemConsequences[heightKey]
 
   return (
-    `A full-body fashion photograph of a ${ageRange} woman with ${skinLabel} skin tone and a ${shape}. ` +
-    `She is wearing the exact coat shown in the reference image — preserve its color, cut, and all details. ` +
-    `${hemLine} ` +
-    `White studio background, full figure visible head to toe. Fictional person.`
+    `A full-body professional fashion photograph of a fictional ${ageRange} woman who is ${heightDesc} with a ${bodyDesc} figure, ${skinLabel} skin tone. ` +
+    `She is wearing a coat that matches the reference image exactly — same color, fabric, style, cut, and all details. ` +
+    `${hemNote} ` +
+    `White studio background, full body visible from head to toe. This is a fictional individual, not a real person.`
   )
 }
 

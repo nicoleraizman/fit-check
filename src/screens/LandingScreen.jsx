@@ -36,7 +36,10 @@ export default function LandingScreen({ onStart }) {
           autoFocus
         />
         <p className={styles.inputHint}>
-          Tip: on COS or Zara, right-click the product photo and choose "Copy Image Address"
+          Use a flat-lay or ghost mannequin photo — ideally the product-only shot (usually the 2nd or 3rd photo in the gallery on COS or Zara).
+        </p>
+        <p className={styles.inputHintWarning}>
+          Avoid photos of models wearing the item — use the flat product shot for best results.
         </p>
       </div>
 
