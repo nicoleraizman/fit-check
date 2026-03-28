@@ -48,8 +48,7 @@ export async function generateFitImage(profile, garmentData) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         prompt,
-        garmentImageBase64: garmentData?.imageBase64 ?? null,
-        garmentMimeType: garmentData?.mimeType ?? 'image/jpeg',
+        garmentImageUrl: garmentData?.imageUrl ?? null,
       }),
     })
 
