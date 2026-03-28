@@ -1,0 +1,280 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #fff;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid #e8e8e8;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 10;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  color: #111;
+  padding: 4px;
+}
+
+.logo {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+
+.content {
+  padding: 28px 20px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+
+.sectionSub {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.55;
+  margin-top: -20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fieldHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fieldLabel {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: #888;
+}
+
+/* Unit toggle */
+.unitToggle {
+  display: flex;
+  border: 1px solid #ddd;
+}
+
+.unitBtn {
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #888;
+  letter-spacing: 0.05em;
+  transition: background 0.12s, color 0.12s;
+}
+
+.unitActive {
+  background: #111;
+  color: #fff;
+}
+
+/* Height slider */
+.heightRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.slider {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 2px;
+  background: #e0e0e0;
+  outline: none;
+  border-radius: 0;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #C9B99A;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px #C9B99A;
+}
+
+.heightValue {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  min-width: 56px;
+  text-align: right;
+}
+
+/* ft/in inputs */
+.ftRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ftField {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.ftInput {
+  width: 52px;
+  height: 40px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  font-family: inherit;
+  text-align: center;
+  color: #111;
+  background: #fff;
+  -moz-appearance: textfield;
+}
+
+.ftInput::-webkit-inner-spin-button,
+.ftInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+.ftUnit {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Body type grid */
+.bodyGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.bodyCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 8px 14px;
+  border: 1.5px solid #e0e0e0;
+  gap: 8px;
+  transition: border-color 0.15s;
+  background: #fff;
+}
+
+.bodyCardActive {
+  border-color: #C9B99A;
+  background: #faf8f5;
+}
+
+.silhouette {
+  width: 36px;
+  height: 48px;
+  color: #ccc;
+}
+
+.bodyCardActive .silhouette {
+  color: #C9B99A;
+}
+
+.bodyLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: #111;
+}
+
+.bodyDesc {
+  font-size: 10px;
+  color: #999;
+  letter-spacing: 0.03em;
+}
+
+/* Skin tones */
+.toneRow {
+  display: flex;
+  gap: 10px;
+}
+
+.toneSwatch {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2.5px solid transparent;
+  transition: border-color 0.15s, transform 0.12s;
+  flex-shrink: 0;
+}
+
+.toneSwatch:active {
+  transform: scale(0.9);
+}
+
+.toneActive {
+  border-color: #111;
+  transform: scale(1.1);
+}
+
+.toneLabel {
+  font-size: 12px;
+  color: #555;
+  margin-top: -4px;
+}
+
+/* Age range */
+.ageRow {
+  display: flex;
+  gap: 8px;
+}
+
+.ageBtn {
+  flex: 1;
+  height: 40px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1.5px solid #e0e0e0;
+  color: #111;
+  letter-spacing: 0.03em;
+  transition: border-color 0.15s, background 0.15s;
+  background: #fff;
+}
+
+.ageBtnActive {
+  border-color: #C9B99A;
+  background: #faf8f5;
+}
+
+/* Submit */
+.submitBtn {
+  width: 100%;
+  height: 52px;
+  background: #111;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 8px;
+  transition: background 0.15s;
+}
+
+.submitBtn:disabled {
+  background: #ccc;
+  color: #888;
+  cursor: default;
+}

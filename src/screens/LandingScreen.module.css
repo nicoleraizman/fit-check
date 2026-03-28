@@ -1,0 +1,127 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #fff;
+}
+
+.header {
+  padding: 24px 24px 0;
+}
+
+.logo {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: #111;
+}
+
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px 32px;
+  text-align: center;
+}
+
+.headline {
+  font-size: 36px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.sub {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #666;
+}
+
+.inputSection {
+  margin: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inputLabel {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #888;
+}
+
+.urlInput {
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  border: 1px solid #d8d8d8;
+  border-radius: 0;
+  font-size: 13px;
+  color: #111;
+  background: #fff;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+.urlInput::placeholder {
+  color: #bbb;
+}
+
+.urlInput:focus {
+  border-color: #111;
+}
+
+.urlInput:disabled {
+  background: #f7f7f7;
+  color: #999;
+}
+
+.errorMsg {
+  font-size: 12px;
+  color: #c0392b;
+  line-height: 1.5;
+}
+
+.cta {
+  padding: 20px 24px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.ctaBtn {
+  width: 100%;
+  height: 52px;
+  background: #111;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: background 0.15s, opacity 0.15s;
+  font-family: inherit;
+}
+
+.ctaBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.ctaBtn:not(:disabled):active {
+  background: #333;
+}
+
+.ctaNote {
+  font-size: 11px;
+  color: #aaa;
+  letter-spacing: 0.04em;
+}
