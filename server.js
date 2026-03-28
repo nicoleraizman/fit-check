@@ -16,12 +16,57 @@ app.use(express.static(join(__dirname, 'dist')))
 
 const ai = new GoogleGenAI({ apiKey: process.env.VITE_GEMINI_API_KEY })
 
+const SKIN_TONE_LABELS = ['very fair', 'light', 'light-medium', 'medium', 'medium-deep', 'deep']
+
+function buildPrompt(profile) {
+  const { heightCm, bodyType, skinToneIndex, ageRange } = profile
+
+  let heightDesc
+  if (heightCm < 160) {
+    heightDesc = 'very petite woman, short stature, the coat hem reaches her mid-shin, noticeably short legs relative to torso'
+  } else if (heightCm <= 170) {
+    heightDesc = 'average height woman, the coat hem falls at knee length'
+  } else if (heightCm <= 180) {
+    heightDesc = 'tall woman, long legs, the coat hem sits above the knee'
+  } else {
+    heightDesc = 'very tall woman, exceptionally long legs, the coat appears short on her, hem well above the knee'
+  }
+
+  const bodyDescriptors = {
+    petite:  'narrow shoulders, small frame, slim throughout',
+    regular: 'proportionate shoulders and hips, medium build',
+    curvy:   'wide hips significantly wider than shoulders, full bust, defined waist',
+    tall:    'long limbs, lean proportions, leggy silhouette',
+  }
+  const bodyDesc = bodyDescriptors[bodyType] ?? bodyDescriptors.regular
+
+  const fitConsequences = {
+    petite:  'the coat overwhelms her small frame, sleeves are long, shoulders wide, hem near the ankle',
+    regular: 'the coat fits proportionately, hem at knee, shoulders align well',
+    curvy:   'the coat is fitted through the waist and flares over the hips, hips visibly wider than shoulders',
+    tall:    'the coat looks short on her long frame, hem high, sleeves cropped, silhouette lean and elongated',
+  }
+  const fitConsequence = fitConsequences[bodyType] ?? fitConsequences.regular
+
+  const skinLabel = SKIN_TONE_LABELS[skinToneIndex] ?? 'medium'
+
+  return (
+    `A full-body professional fashion photograph. A ${heightDesc}, ${bodyDesc} woman` +
+    ` with ${skinLabel} skin tone, ${ageRange} age range, wearing this exact coat —` +
+    ` same color, same style, preserve all details.` +
+    ` The coat should visually demonstrate how it fits THIS specific body: ${fitConsequence}.` +
+    ` White studio background, full body visible from head to toe. Fictional person, not a real individual.`
+  )
+}
+
 app.post('/api/generate', async (req, res) => {
-  const { prompt, garmentImageUrl } = req.body
-  console.log('[server] Prompt received:\n', prompt)
+  const { profile, garmentImageUrl } = req.body
+
+  const prompt = buildPrompt(profile)
+  console.log('[server] Prompt:\n', prompt)
 
   try {
-    const parts = []
+    const contents = []
 
     if (garmentImageUrl) {
       console.log('[server] Fetching garment image:', garmentImageUrl)
@@ -35,14 +80,14 @@ app.post('/api/generate', async (req, res) => {
       const mimeType = (imgRes.headers.get('content-type') || 'image/jpeg').split(';')[0]
       const imageBase64 = Buffer.from(buffer).toString('base64')
       console.log('[server] Garment image fetched, mimeType:', mimeType, 'size:', buffer.byteLength)
-      parts.push({ inlineData: { mimeType, data: imageBase64 } })
+      contents.push({ role: 'user', parts: [{ inlineData: { mimeType, data: imageBase64 } }] })
     }
 
-    parts.push({ text: prompt })
+    contents.push({ role: 'user', parts: [{ text: prompt }] })
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
-      contents: [{ role: 'user', parts }],
+      contents,
       config: {
         responseModalities: ['TEXT', 'IMAGE'],
       },
