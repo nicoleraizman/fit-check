@@ -20,42 +20,55 @@ const SKIN_TONE_LABELS = ['very fair', 'light', 'light-medium', 'medium', 'mediu
 
 function buildPrompt(profile) {
   const { heightCm, bodyType, skinToneIndex, ageRange } = profile
-
-  let heightDesc
-  if (heightCm < 160) {
-    heightDesc = 'very petite woman, short stature, the coat hem reaches her mid-shin, noticeably short legs relative to torso'
-  } else if (heightCm <= 170) {
-    heightDesc = 'average height woman, the coat hem falls at knee length'
-  } else if (heightCm <= 180) {
-    heightDesc = 'tall woman, long legs, the coat hem sits above the knee'
-  } else {
-    heightDesc = 'very tall woman, exceptionally long legs, the coat appears short on her, hem well above the knee'
-  }
-
-  const bodyDescriptors = {
-    petite:  'narrow shoulders, small frame, slim throughout',
-    regular: 'proportionate shoulders and hips, medium build',
-    curvy:   'wide hips significantly wider than shoulders, full bust, defined waist',
-    tall:    'long limbs, lean proportions, leggy silhouette',
-  }
-  const bodyDesc = bodyDescriptors[bodyType] ?? bodyDescriptors.regular
-
-  const fitConsequences = {
-    petite:  'the coat overwhelms her small frame, sleeves are long, shoulders wide, hem near the ankle',
-    regular: 'the coat fits proportionately, hem at knee, shoulders align well',
-    curvy:   'the coat is fitted through the waist and flares over the hips, hips visibly wider than shoulders',
-    tall:    'the coat looks short on her long frame, hem high, sleeves cropped, silhouette lean and elongated',
-  }
-  const fitConsequence = fitConsequences[bodyType] ?? fitConsequences.regular
-
   const skinLabel = SKIN_TONE_LABELS[skinToneIndex] ?? 'medium'
 
+  // Describe HOW THE COAT BEHAVES on this height — not the person's height
+  let coatBehavior
+  if (heightCm < 160) {
+    coatBehavior =
+      `The woman is very short (${heightCm}cm). The midi coat reaches all the way to her mid-calf, ` +
+      `almost ankle length on her short frame. Her legs look short beneath the hem. ` +
+      `The coat overwhelms her small frame — the shoulders are wide on her, the sleeves are long.`
+  } else if (heightCm <= 170) {
+    coatBehavior =
+      `The woman is average height (${heightCm}cm). The midi coat falls at a classic midi length, ` +
+      `sitting just below the knee. A moderate amount of leg is visible below the hem.`
+  } else if (heightCm <= 180) {
+    coatBehavior =
+      `The woman is tall (${heightCm}cm) with long legs. The same midi coat only reaches her knee on her tall frame. ` +
+      `Significant leg is visible below the hem. The coat looks shorter than it is because of her height.`
+  } else {
+    coatBehavior =
+      `The woman is very tall (${heightCm}cm) with exceptionally long legs. The same midi coat sits well above her knee, ` +
+      `almost like a mini coat on her frame. A lot of leg is visible. ` +
+      `The coat looks dramatically short compared to how it would look on a shorter person.`
+  }
+
+  // Describe HOW THE COAT BEHAVES on this body shape
+  const bodyBehavior = {
+    petite:
+      `The coat drapes loosely — petite frame with narrow shoulders and a slim silhouette. ` +
+      `The fabric hangs straight with minimal shaping.`,
+    regular:
+      `The coat fits cleanly with proportionate drape across the shoulders and hips. ` +
+      `The silhouette is balanced and the coat falls smoothly.`,
+    curvy:
+      `The woman has an hourglass figure with noticeably wide hips, full bust, and a clearly defined narrow waist. ` +
+      `The coat fabric pulls and drapes around the hips. ` +
+      `The belt cinches at a small waist between a full bust above and wide hips below. ` +
+      `The coat flares outward over the hips.`,
+    tall:
+      `The coat fits well through the shoulders and torso on her lean frame. ` +
+      `The silhouette is long and streamlined, with the hem sitting high due to her height.`,
+  }
+  const bodyDesc = bodyBehavior[bodyType] ?? bodyBehavior.regular
+
   return (
-    `A full-body professional fashion photograph. A ${heightDesc}, ${bodyDesc} woman` +
-    ` with ${skinLabel} skin tone, ${ageRange} age range, wearing this exact coat —` +
-    ` same color, same style, preserve all details.` +
-    ` The coat should visually demonstrate how it fits THIS specific body: ${fitConsequence}.` +
-    ` White studio background, full body visible from head to toe. Fictional person, not a real individual.`
+    `A full-body professional fashion photograph of a ${ageRange} woman with ${skinLabel} skin tone ` +
+    `wearing the exact coat from the reference image — same color, fabric, style, and every detail preserved.\n\n` +
+    `HOW THE COAT FITS HER HEIGHT:\n${coatBehavior}\n\n` +
+    `HOW THE COAT FITS HER BODY SHAPE:\n${bodyDesc}\n\n` +
+    `Show the full body from head to toe. White studio background. Fictional person, not a real individual.`
   )
 }
 
@@ -90,6 +103,7 @@ app.post('/api/generate', async (req, res) => {
       contents,
       config: {
         responseModalities: ['TEXT', 'IMAGE'],
+        systemInstruction: 'You are a fashion visualization tool. Your only job is to show exactly how clothing fits on different body types. You must accurately represent the body type and height provided, especially how garment length changes relative to leg length.',
       },
     })
 
