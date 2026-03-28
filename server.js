@@ -41,7 +41,7 @@ app.post('/api/generate', async (req, res) => {
     parts.push({ text: prompt })
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash-exp-image-generation',
+      model: 'gemini-2.5-flash-image',
       contents: [{ role: 'user', parts }],
       config: {
         responseModalities: ['TEXT', 'IMAGE'],
