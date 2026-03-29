@@ -18,40 +18,44 @@ const ai = new GoogleGenAI({ apiKey: process.env.VITE_GEMINI_API_KEY })
 
 const SKIN_TONE_LABELS = ['very fair', 'light', 'light-medium', 'medium', 'medium-deep', 'deep']
 
+const FRAME_DESCS = [
+  'very slim and narrow-shouldered',
+  'lean with narrow shoulders',
+  'medium frame with balanced proportions',
+  'broad-shouldered with a wide frame',
+  'very broad and wide-shouldered',
+]
+
+const HIP_DESCS = [
+  'straight up-and-down silhouette with minimal hip curve',
+  'slight hip curve',
+  'balanced proportions between shoulders and hips',
+  'full hips noticeably wider than shoulders',
+  'very full hips and pronounced hourglass shape',
+]
+
 function buildPrompt(profile) {
-  const { heightCm, bodyType, skinToneIndex, ageRange } = profile
-  const skinLabel = SKIN_TONE_LABELS[skinToneIndex] ?? 'medium'
+  const { heightCm, garmentLength, frameValue, hipValue, skinToneIndex } = profile
+  const skinLabel  = SKIN_TONE_LABELS[skinToneIndex] ?? 'medium'
+  const frameDesc  = FRAME_DESCS[frameValue] ?? FRAME_DESCS[2]
+  const hipDesc    = HIP_DESCS[hipValue]    ?? HIP_DESCS[2]
 
-  const heightDescriptors = {
-    short:   `very short (${heightCm}cm) with short legs and a compact frame`,
-    average: `average height (${heightCm}cm) with balanced proportions`,
-    tall:    `tall (${heightCm}cm) with long legs`,
-    verytall: `very tall (${heightCm}cm) with exceptionally long legs`,
-  }
-  const heightKey = heightCm < 160 ? 'short' : heightCm <= 170 ? 'average' : heightCm <= 180 ? 'tall' : 'verytall'
-  const heightDesc = heightDescriptors[heightKey]
-
-  const bodyDescriptors = {
-    petite:  'slim, narrow-shouldered',
-    regular: 'proportionate, medium-build',
-    curvy:   'hourglass — full bust, narrow waist, wide hips',
-    tall:    'lean, long-limbed',
-  }
-  const bodyDesc = bodyDescriptors[bodyType] ?? bodyDescriptors.regular
-
-  const hemConsequences = {
-    short:    `Because she is short, the coat's hem falls near her mid-calf — it reads as a maxi length on her, with very little leg visible below.`,
-    average:  `The coat hem falls just below the knee — a classic midi length with a moderate amount of leg visible.`,
-    tall:     `Because she is tall, the coat's hem only reaches her knee — more leg is visible than intended by the design.`,
-    verytall: `Because she is very tall, the coat's hem sits above the knee — it reads as a short coat on her, with most of her long legs on show.`,
-  }
-  const hemNote = hemConsequences[heightKey]
+  const hemRatio = garmentLength / heightCm
+  let hemDescription
+  if (hemRatio < 0.55)      hemDescription = 'the coat hem falls well above her knees, showing most of her legs'
+  else if (hemRatio < 0.62) hemDescription = 'the coat hem falls just above her knees'
+  else if (hemRatio < 0.68) hemDescription = 'the coat hem falls at knee length'
+  else if (hemRatio < 0.75) hemDescription = 'the coat hem falls mid-calf'
+  else                      hemDescription = 'the coat hem falls near her ankles, almost floor length on her'
 
   return (
-    `A full-body professional fashion photograph of a fictional ${ageRange} woman who is ${heightDesc} with a ${bodyDesc} figure, ${skinLabel} skin tone. ` +
-    `She is wearing a coat that matches the reference image exactly — same color, fabric, style, cut, and all details. ` +
-    `${hemNote} ` +
-    `White studio background, full body visible from head to toe. This is a fictional individual, not a real person.`
+    `A full-body professional fashion photograph on a white studio background. ` +
+    `A fictional woman who is ${heightCm}cm tall. ` +
+    `She has a ${frameDesc} and ${hipDesc}. ` +
+    `She has ${skinLabel} skin tone. ` +
+    `She is wearing a coat that exactly matches the reference image in color, fabric, style and cut. ` +
+    `${hemDescription}. ` +
+    `Full body visible from head to toe. The proportions must be accurate — this is for a shopping fit visualization tool. Not a real person.`
   )
 }
 

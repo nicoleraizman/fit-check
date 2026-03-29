@@ -55,7 +55,7 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .fieldHeader {
@@ -69,6 +69,13 @@
   font-weight: 600;
   letter-spacing: 0.14em;
   color: #888;
+}
+
+.fieldHint {
+  font-size: 11px;
+  color: #aaa;
+  line-height: 1.5;
+  margin-top: -2px;
 }
 
 /* Unit toggle */
@@ -161,49 +168,48 @@
   color: #888;
 }
 
-/* Body type grid */
-.bodyGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.bodyCard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 16px 8px 14px;
-  border: 1.5px solid #e0e0e0;
-  gap: 8px;
-  transition: border-color 0.15s;
+/* Garment length number input */
+.lengthInput {
+  height: 44px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  font-family: inherit;
+  padding: 0 14px;
+  color: #111;
   background: #fff;
+  width: 100%;
+  -moz-appearance: textfield;
 }
 
-.bodyCardActive {
+.lengthInput::-webkit-inner-spin-button,
+.lengthInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+.lengthInput:focus {
+  outline: none;
   border-color: #C9B99A;
-  background: #faf8f5;
 }
 
-.silhouette {
-  width: 36px;
-  height: 48px;
-  color: #ccc;
+/* Frame / Hip sliders */
+.sliderRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.bodyCardActive .silhouette {
-  color: #C9B99A;
+.sliderEdgeLabel {
+  font-size: 11px;
+  color: #aaa;
+  white-space: nowrap;
 }
 
-.bodyLabel {
-  font-size: 12px;
+.sliderCenterLabel {
+  font-size: 13px;
   font-weight: 500;
   color: #111;
-}
-
-.bodyDesc {
-  font-size: 10px;
-  color: #999;
-  letter-spacing: 0.03em;
+  text-align: center;
+  letter-spacing: 0.02em;
 }
 
 /* Skin tones */
@@ -228,35 +234,6 @@
 .toneActive {
   border-color: #111;
   transform: scale(1.1);
-}
-
-.toneLabel {
-  font-size: 12px;
-  color: #555;
-  margin-top: -4px;
-}
-
-/* Age range */
-.ageRow {
-  display: flex;
-  gap: 8px;
-}
-
-.ageBtn {
-  flex: 1;
-  height: 40px;
-  font-size: 12px;
-  font-weight: 500;
-  border: 1.5px solid #e0e0e0;
-  color: #111;
-  letter-spacing: 0.03em;
-  transition: border-color 0.15s, background 0.15s;
-  background: #fff;
-}
-
-.ageBtnActive {
-  border-color: #C9B99A;
-  background: #faf8f5;
 }
 
 /* Submit */
