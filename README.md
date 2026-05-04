@@ -1,41 +1,23 @@
-# Fit Check
+# FitCheck
+https://fit-check-pi9n.onrender.com/ 
+FitCheck solves a real online shopping problem: a coat that looks elegant on a 180cm model can look completely different on a shorter person — but there's no way to know before buying.
 
-Paste any fashion product URL and see how the garment looks on your body type. Powered by Google Gemini image generation.
+You paste a product URL, enter your height, body frame, and skin tone, and FitCheck generates an AI image showing how that garment would actually look on your body type.
 
-## Deploy to Railway
+## How it works
+- Paste any fashion product image URL
+- Set your height, frame width, hip shape, and skin tone
+- FitCheck sends the garment image + your measurements to Google Gemini
+- Gemini generates a full-body fashion photo showing the fit on your proportions
 
-1. Push this repo to GitHub.
-
-2. Go to [railway.app](https://railway.app), create a new project, and select **Deploy from GitHub repo**.
-
-3. Under **Variables**, add:
-   ```
-   VITE_GEMINI_API_KEY=your_gemini_api_key
-   ```
-
-4. Railway will automatically run `npm install` and `npm start`. The Express server serves the pre-built `dist/` folder and handles API routes.
-
-5. Once deployed, Railway provides a public URL — open it and the app is live.
-
-## Local development
-
-```bash
-# Install dependencies
-npm install
-
-# Copy env file and fill in your key
-cp .env.example .env
-
-# Run Vite dev server (hot reload, port 5173)
-npm run dev
-
-# Or build and run the Express server (port 3001)
-npm run build
-npm start
-```
+## Tech stack
+- React (frontend)
+- Express (backend)
+- Google Gemini 2.5 Flash (AI image generation)
+- Vite
+- Deployed on Render
 
 ## Environment variables
-
 | Variable | Description |
 |---|---|
 | `VITE_GEMINI_API_KEY` | Google Gemini API key with image generation access |
